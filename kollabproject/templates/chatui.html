@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chat Application</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 260px;
+            background: #086398;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 0 20px 0;
+            min-height: 100vh;
+        }
+        .spacer {
+            flex: 1;
+        }
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 12px;
+        }
+        .sidebar-logo img {
+            width: 36px;
+            height: 36px;
+            margin-right: 12px;
+        }
+        .sidebar-logo h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .sidebar-menu,
+        .sidebar-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 0 20px;
+        }
+        .sidebar-menu button,
+        .sidebar-footer button {
+            background: none;
+            border: none;
+            color: white;
+            text-align: left;
+            font-size: 14px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background 0.2s;
+        }
+        .sidebar-menu button.active,
+        .sidebar-menu button:hover,
+        .sidebar-footer button:hover {
+            background: rgba(92, 156, 239, 0.12);
+        }
+        .icon {
+            font-size: 20px;
+            margin-right: 4px;
+        }
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            background: #084161;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chat-header-left img {
+            width: 32px;
+            height: 32px;
+            margin-right: 8px;
+        }
+        .chat-header-left h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .chat-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .chat-header-actions button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            margin-right: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 50%;
+            padding: 6px;
+        }
+        .chat-header-actions button:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .chat-header-actions input {
+            padding: 6px 14px;
+            border-radius: 15px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+            background: white;
+            color: black;
+        }
+        .chat-window {
+            flex: 1;
+            background: #003351;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+            overflow-y: auto;
+        }
+        .message-row {
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 20px;
+        }
+        .message-row.left {
+            justify-content: flex-start;
+        }
+        .message-row.right {
+            justify-content: flex-end;
+            flex-direction: row-reverse;
+        }
+        .message-row img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 12px;
+            object-fit: cover;
+            background: #fff;
+            border: 2px solid #fff;
+        }
+        .sender {
+            font-size: 14px;
+            color: #0073B7;
+            margin-bottom: 5px;
+            display: block;
+            font-weight: 600;
+        }
+        .message {
+            padding: 14px 18px;
+            border-radius: 14px;
+            max-width: 350px;
+            font-size: 16px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+        .message.dark {
+            background: #212121;
+            color: #fff;
+        }
+        .message.blue {
+            background: #0073B7;
+            color: #fff;
+        }
+        .chat-input {
+            display: flex;
+            align-items: center;
+            background: #0073B7;
+            border-radius: 14px;
+            padding: 12px 20px;
+            position: sticky;
+            bottom: 0;
+            margin-top: auto;
+        }
+        .chat-input img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: 12px;
+            object-fit: cover;
+            background: #fff;
+            border: 2px solid #fff;
+        }
+        .input-box {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        .input-box input {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+            margin: 0 8px;
+            outline: none;
+        }
+        .input-box button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 22px;
+            margin: 0 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .input-box button:hover {
+            background: rgba(33, 150, 243, 0.1);
+            border-radius: 50%;
+        }
+        
+        /* File Upload Modal */
+        .file-modal {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            
+            background: #0073B7;
+            border-radius: 10px;
+            padding: 10px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .file-modal.active {
+            display: block;
+        }
+        
+        .file-options {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .file-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.2s;
+            font-size: 14px;
+        }
+        
+        .file-option:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .file-option input[type="file"] {
+            display: none;
+        }
+        
+        /* Emoji Picker */
+        .emoji-picker {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            right: 120px;
+            background: #0073B7;
+            border-radius: 10px;
+            padding: 15px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            width: 300px;
+        }
+        
+        .emoji-picker.active {
+            display: block;
+        }
+        
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+        }
+        
+        .emoji-item {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+        
+        .emoji-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <img src="/static/logo.png" alt="KollabHub" />
+        
+            <h2>KollabHub</h2>
+        </div>
+        <div class="sidebar-menu">
+            <button class="active">
+                <span class="icon">👥</span>
+                Groups
+            </button>
+            <button>
+                <span class="icon">💬</span>
+                Direct Messages
+            </button>
+            <button>
+                <span class="icon">➕</span>
+                Invite People
+            </button>
+        </div>
+        <div class="spacer"></div>
+        <div class="sidebar-footer">
+
+            <button>
+                <span class="icon">👤</span>
+                Profile
+            </button>
+            <a href="{% url 'logout' %}" class="sidebar-btn" style="display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; padding: 12px 16px; border-radius: 10px;">
+            <span class="icon">
+            <!-- Logout SVG icon -->
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M16 17L21 12L16 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M21 12H9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 19V17C12 15.8954 11.1046 15 10 15H5C3.89543 15 3 15.8954 3 17V19C3 20.1046 3.89543 21 5 21H10C11.1046 21 12 20.1046 12 19Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            </span>
+            Logout
+            </a>
+            <button>
+                <span class="icon">⚙️</span>
+                Settings
+            </button>
+        </div>
+    </div>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="chat-header-left">
+                <img src="/static/logo.png" alt="logo" />
+                <h2>Project Final Year</h2>
+            </div>
+            <div class="chat-header-actions">
+                <button title="Call">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff">
+                        <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.21.49 2.53.76 3.88.76a1 1 0 011 1v3.5a1 1 0 01-1 1C7.61 22 2 16.39 2 9.5a1 1 0 011-1H6.5a1 1 0 011 1c0 1.35.27 2.67.76 3.88a1 1 0 01-.21 1.11l-2.2 2.2z" fill="#2196f3"/>
+                    </svg>
+                </button>
+                <button title="Video">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#2196f3">
+                        <rect x="3" y="7" width="13" height="10" rx="2" fill="#2196f3"/>
+                        <polygon points="17,10 22,7 22,17 17,14" fill="#2196f3"/>
+                    </svg>
+                </button>
+                <button title="Info">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#2196f3">
+                        <circle cx="12" cy="12" r="10" fill="#2196f3"/>
+                        <rect x="11" y="10" width="2" height="6" rx="1" fill="#fff"/>
+                        <rect x="11" y="7" width="2" height="2" rx="1" fill="#fff"/>
+                    </svg>
+                </button>
+                <input type="text" placeholder="Search" />
+            </div>
+        </div>
+        <div class="chat-window" id="chatWindow">
+            <!-- Messages will be dynamically added here -->
+        </div>
+        <div class="chat-input">
+            <img src="/static/Areeba.jpeg" alt="Areeba" />
+            <div class="input-box">
+                <button id="fileButton">📎</button>
+                <input type="text" id="messageInput" placeholder="#Message" />
+                <button id="emojiButton">😊</button>
+                <button>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                        <rect x="9" y="3" width="6" height="12" rx="3" fill="#fff"/>
+                        <rect x="11" y="17" width="2" height="4" rx="1" fill="#fff"/>
+                        <path d="M7 11v1a5 5 0 0 0 10 0v-1" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                </button>
+                <button id="sendButton">➤</button>
+            </div>
+        </div>
+        
+        <!-- File Upload Modal -->
+        <div class="file-modal" id="fileModal">
+            <div class="file-options">
+                <label class="file-option">
+                    📷 Images
+                    <input type="file" id="imageInput" accept="image/*" multiple>
+                </label>
+                <label class="file-option">
+                    🎥 Videos
+                    <input type="file" id="videoInput" accept="video/*" multiple>
+                </label>
+                <label class="file-option">
+                    📄 Documents
+                    <input type="file" id="documentInput" accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx" multiple>
+                </label>
+                <label class="file-option">
+                    📁 All Files
+                    <input type="file" id="allFilesInput" multiple>
+                </label>
+            </div>
+        </div>
+        
+        <!-- Emoji Picker -->
+        <div class="emoji-picker" id="emojiPicker">
+            <div class="emoji-grid">
+                <button class="emoji-item">😀</button>
+                <button class="emoji-item">😂</button>
+                <button class="emoji-item">😍</button>
+                <button class="emoji-item">😊</button>
+                <button class="emoji-item">😎</button>
+                <button class="emoji-item">😢</button>
+                <button class="emoji-item">😡</button>
+                <button class="emoji-item">😱</button>
+                <button class="emoji-item">😴</button>
+                <button class="emoji-item">🤔</button>
+                <button class="emoji-item">👍</button>
+                <button class="emoji-item">👎</button>
+                <button class="emoji-item">👏</button>
+                <button class="emoji-item">🙏</button>
+                <button class="emoji-item">❤️</button>
+                <button class="emoji-item">💔</button>
+                <button class="emoji-item">🔥</button>
+                <button class="emoji-item">⭐</button>
+                <button class="emoji-item">✅</button>
+                <button class="emoji-item">❌</button>
+                <button class="emoji-item">🎉</button>
+                <button class="emoji-item">💯</button>
+                <button class="emoji-item">🚀</button>
+                <button class="emoji-item">💡</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const messages = [
+            {
+                id: 1,
+                sender: "Areeba",
+                avatar: "/static/Areeba.jpeg",
+                text: "Hey team, just a reminder about our sprint review tomorrow at 2 PM. Please have your updates ready.",
+                side: "left",
+            },
+            {
+                id: 2,
+                sender: "Imsha",
+                avatar: "/static/Imsha.jpeg",
+                text: "Got it, Areeba. Will be prepared.",
+                side: "right",
+            },
+            {
+                id: 3,
+                sender: "Almas",
+                avatar: "/static/Almas.jpeg",
+                text: "Sounds good, I'll have my progress report ready.",
+                side: "left",
+            },
+            {
+                id: 4,
+                sender: "Imsha",
+                avatar: "/static/Imsha.jpeg",
+                text: "Great! Looking forward to seeing everyone's work.",
+                side: "right",
+            },
+        ];
+
+        const chatWindow = document.getElementById('chatWindow');
+
+        function renderMessages() {
+            chatWindow.innerHTML = '';
+            messages.forEach(msg => {
+                const messageRow = document.createElement('div');
+                messageRow.className = `message-row ${msg.side}`;
+                if (msg.side === "left") {
+                    messageRow.innerHTML = `<img src="${msg.avatar}" alt="${msg.sender}" />
+                                            <div>
+                                                <span class="sender">${msg.sender}</span>
+                                                <div class="message dark">${msg.text}</div>
+                                            </div>`;
+                } else {
+                    messageRow.innerHTML = `<div>
+                                                <span class="sender">${msg.sender}</span>
+                                                <div class="message blue">${msg.text}</div>
+                                            </div>
+                                            <img src="${msg.avatar}" alt="${msg.sender}" />`;
+                }
+                chatWindow.appendChild(messageRow);
+            });
+        }
+
+        document.getElementById('sendButton').addEventListener('click', () => {
+            const messageInput = document.getElementById('messageInput');
+            const newMessage = {
+                id: messages.length + 1,
+                sender: "You",
+                avatar: "/static/Areeba.jpeg",
+                text: messageInput.value,
+                side: "right",
+            };
+            messages.push(newMessage);
+            messageInput.value = '';
+            renderMessages();
+        });
+
+        renderMessages();
+        
+        // File Upload Functionality
+        const fileButton = document.getElementById('fileButton');
+        const fileModal = document.getElementById('fileModal');
+        const emojiButton = document.getElementById('emojiButton');
+        const emojiPicker = document.getElementById('emojiPicker');
+        const messageInput = document.getElementById('messageInput');
+        
+        // Toggle file modal
+        fileButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileModal.classList.toggle('active');
+            emojiPicker.classList.remove('active');
+        });
+        
+        // Toggle emoji picker
+        emojiButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            emojiPicker.classList.toggle('active');
+            fileModal.classList.remove('active');
+        });
+        
+        // Close modals when clicking outside
+        document.addEventListener('click', () => {
+            fileModal.classList.remove('active');
+            emojiPicker.classList.remove('active');
+        });
+        
+        // Prevent modal from closing when clicking inside
+        fileModal.addEventListener('click', (e) => e.stopPropagation());
+        emojiPicker.addEventListener('click', (e) => e.stopPropagation());
+        
+        // Handle file uploads
+        function handleFileUpload(files, type) {
+            Array.from(files).forEach(file => {
+                const newMessage = {
+                    id: messages.length + 1,
+                    sender: "You",
+                    avatar: "/static/Areeba.jpeg",
+                    text: `📎 ${file.name} (${type})`,
+                    side: "right",
+                };
+                messages.push(newMessage);
+            });
+            renderMessages();
+            fileModal.classList.remove('active');
+        }
+        
+        // File input event listeners
+        document.getElementById('imageInput').addEventListener('change', (e) => {
+            handleFileUpload(e.target.files, 'Image');
+        });
+        
+        document.getElementById('videoInput').addEventListener('change', (e) => {
+            handleFileUpload(e.target.files, 'Video');
+        });
+        
+        document.getElementById('documentInput').addEventListener('change', (e) => {
+            handleFileUpload(e.target.files, 'Document');
+        });
+        
+        document.getElementById('allFilesInput').addEventListener('change', (e) => {
+            handleFileUpload(e.target.files, 'File');
+        });
+        
+        // Emoji functionality
+        document.querySelectorAll('.emoji-item').forEach(emoji => {
+            emoji.addEventListener('click', () => {
+                messageInput.value += emoji.textContent;
+                emojiPicker.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>
