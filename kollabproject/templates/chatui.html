@@ -309,6 +309,175 @@
         .emoji-item:hover {
             background: rgba(255,255,255,0.1);
         }
+
+        /* Invite People Modal */
+        .invite-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .invite-modal.active {
+            display: flex;
+        }
+        
+        .invite-modal-content {
+            background: #0073B7;
+            border-radius: 15px;
+            padding: 30px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            color: white;
+        }
+        
+        .invite-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .invite-modal-header h3 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .invite-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .invite-form input {
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            placeholder-color: rgba(255,255,255,0.7);
+        }
+        
+        .invite-form input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .invite-form button {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #084161;
+            color: white;
+            transition: background 0.2s;
+        }
+        
+        .invite-form button:hover {
+            background: #086398;
+        }
+        
+        .invite-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .invite-option {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .invite-option:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        .invite-link-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .invite-link-section h4 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: white;
+        }
+        
+        .invite-link-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .invite-link-input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 14px;
+            font-family: monospace;
+        }
+        
+        .copy-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            background: #084161;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        
+        .copy-btn:hover {
+            background: #086398;
+        }
+        
+        .copy-btn.copied {
+            background: #28a745;
+        }
     </style>
 </head>
 <body>
@@ -453,6 +622,39 @@
                 <button class="emoji-item">💯</button>
                 <button class="emoji-item">🚀</button>
                 <button class="emoji-item">💡</button>
+            </div>
+        </div>
+
+        <!-- Invite People Modal -->
+        <div class="invite-modal" id="inviteModal">
+            <div class="invite-modal-content">
+                <div class="invite-modal-header">
+                    <h3>Invite People</h3>
+                    <button class="close-btn" id="closeInviteModal">&times;</button>
+                </div>
+                <form class="invite-form" id="inviteForm">
+                    <input type="email" placeholder="Enter email address" required>
+                    <input type="text" placeholder="Add a personal message (optional)">
+                    <div class="invite-options">
+                        <div class="invite-option" data-role="member">
+                            <div>👤</div>
+                            <div>Member</div>
+                        </div>
+                        <div class="invite-option" data-role="admin">
+                            <div>👑</div>
+                            <div>Admin</div>
+                        </div>
+                    </div>
+                    <button type="submit">Send Invite</button>
+                </form>
+                
+                <div class="invite-link-section">
+                    <h4>Or share this invite link:</h4>
+                    <div class="invite-link-container">
+                        <input type="text" class="invite-link-input" id="inviteLink" readonly value="https://kollabhub.com/invite/abc123xyz">
+                        <button class="copy-btn" id="copyInviteLink">Copy</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -600,6 +802,72 @@
                 emojiPicker.classList.remove('active');
             });
         });
+
+        // Invite People Modal Functionality
+        const inviteButton = document.querySelector('.sidebar-menu button:nth-child(3)');
+        const inviteModal = document.getElementById('inviteModal');
+        const closeInviteModal = document.getElementById('closeInviteModal');
+        const inviteForm = document.getElementById('inviteForm');
+        const inviteOptions = document.querySelectorAll('.invite-option');
+        let selectedRole = 'member';
+
+        // Open invite modal
+        inviteButton.addEventListener('click', () => {
+            inviteModal.classList.add('active');
+        });
+
+        // Close invite modal
+        closeInviteModal.addEventListener('click', () => {
+            inviteModal.classList.remove('active');
+        });
+
+        // Close modal when clicking outside
+        inviteModal.addEventListener('click', (e) => {
+            if (e.target === inviteModal) {
+                inviteModal.classList.remove('active');
+            }
+        });
+
+        // Handle role selection
+        inviteOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                inviteOptions.forEach(opt => opt.style.background = 'rgba(255,255,255,0.1)');
+                option.style.background = 'rgba(255,255,255,0.3)';
+                selectedRole = option.dataset.role;
+            });
+        });
+
+        // Handle form submission
+        inviteForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = inviteForm.querySelector('input[type="email"]').value;
+            const message = inviteForm.querySelector('input[type="text"]').value;
+            
+            // Here you would typically send the invitation to your backend
+            console.log('Sending invite to:', email);
+            console.log('Role:', selectedRole);
+            console.log('Message:', message || 'No message');
+            
+            // Show success message
+            alert(`Invitation sent to ${email} as ${selectedRole}`);
+            
+            // Reset form and close modal
+            inviteForm.reset();
+            inviteModal.classList.remove('active');
+            
+            // Reset role selection
+            inviteOptions.forEach(opt => opt.style.background = 'rgba(255,255,255,0.1)');
+            selectedRole = 'member';
+        });
+        function copyInviteLink() {
+    const inviteLink = "http://example.com/invite"; // Replace with the actual invite link
+    navigator.clipboard.writeText(inviteLink).then(() => {
+        alert("Invite link copied to clipboard!");
+    }).catch(err => {
+        console.error("Could not copy text: ", err);
+    });
+}
+
     </script>
 </body>
 </html>
