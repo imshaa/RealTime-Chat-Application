@@ -1,0 +1,1452 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chat Application</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 260px;
+            background: #086398;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 0 20px 0;
+            min-height: 100vh;
+        }
+        .spacer {
+            flex: 1;
+        }
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 12px;
+        }
+        .sidebar-logo img {
+            width: 36px;
+            height: 36px;
+            margin-right: 12px;
+        }
+        .sidebar-logo h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .sidebar-menu,
+        .sidebar-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 0 20px;
+        }
+        .sidebar-menu button,
+        .sidebar-footer button {
+            background: none;
+            border: none;
+            color: white;
+            text-align: left;
+            font-size: 14px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background 0.2s;
+        }
+        .sidebar-menu button.active,
+        .sidebar-menu button:hover,
+        .sidebar-footer button:hover {
+            background: rgba(92, 156, 239, 0.12);
+        }
+        .icon {
+            font-size: 20px;
+            margin-right: 4px;
+        }
+        
+        /* Current Conversation Box */
+        .current-conversation-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .conversation-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .conversation-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .conversation-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+        
+        .conversation-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+        }
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            background: #084161;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chat-header-left img {
+            width: 32px;
+            height: 32px;
+            margin-right: 8px;
+        }
+        .chat-header-left h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .chat-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .chat-header-actions button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            margin-right: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 50%;
+            padding: 6px;
+        }
+        .chat-header-actions button:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .chat-header-actions input {
+            padding: 6px 14px;
+            border-radius: 15px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+            background: white;
+            color: black;
+        }
+        .chat-window {
+            flex: 1;
+            background: #003351;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+            overflow-y: auto;
+        }
+        .message-row {
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 20px;
+        }
+        .message-row.left {
+            justify-content: flex-start;
+        }
+        .message-row.right {
+            justify-content: flex-end;
+            flex-direction: row-reverse;
+        }
+        .message-row img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 12px;
+            object-fit: cover;
+            background: #fff;
+            border: 2px solid #fff;
+        }
+        .sender {
+            font-size: 14px;
+            color: #0073B7;
+            margin-bottom: 5px;
+            display: block;
+            font-weight: 600;
+        }
+        .message {
+            padding: 14px 18px;
+            border-radius: 14px;
+            max-width: 350px;
+            font-size: 16px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+        .message.dark {
+            background: #212121;
+            color: #fff;
+        }
+        .message.blue {
+            background: #0073B7;
+            color: #fff;
+        }
+        .chat-input {
+            display: flex;
+            align-items: center;
+            background: #0073B7;
+            border-radius: 14px;
+            padding: 12px 20px;
+            position: sticky;
+            bottom: 0;
+            margin-top: auto;
+        }
+        .chat-input img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: 12px;
+            object-fit: cover;
+            background: #fff;
+            border: 2px solid #fff;
+        }
+        .input-box {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        .input-box input {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+            margin: 0 8px;
+            outline: none;
+        }
+        .input-box button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 22px;
+            margin: 0 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .input-box button:hover {
+            background: rgba(33, 150, 243, 0.1);
+            border-radius: 50%;
+        }
+        
+        /* File Upload Modal */
+        .file-modal {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            
+            background: #0073B7;
+            border-radius: 10px;
+            padding: 10px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .file-modal.active {
+            display: block;
+        }
+        
+        .file-options {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .file-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.2s;
+            font-size: 14px;
+        }
+        
+        .file-option:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .file-option input[type="file"] {
+            display: none;
+        }
+        
+        /* Emoji Picker */
+        .emoji-picker {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            right: 120px;
+            background: #0073B7;
+            border-radius: 10px;
+            padding: 15px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            width: 300px;
+        }
+        
+        .emoji-picker.active {
+            display: block;
+        }
+        
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+        }
+        
+        .emoji-item {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+        
+        .emoji-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Invite People Modal */
+        .invite-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .invite-modal.active {
+            display: flex;
+        }
+        
+        .invite-modal-content {
+            background: #0073B7;
+            border-radius: 15px;
+            padding: 30px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            color: white;
+        }
+        
+        .invite-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .invite-modal-header h3 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .invite-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .invite-form input {
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            placeholder-color: rgba(255,255,255,0.7);
+        }
+        
+        .invite-form input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .invite-form button {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #084161;
+            color: white;
+            transition: background 0.2s;
+        }
+        
+        .invite-form button:hover {
+            background: #086398;
+        }
+        
+        .invite-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .invite-option {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .invite-option:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        .invite-link-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .invite-link-section h4 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: white;
+        }
+        
+        .invite-link-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .invite-link-input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 14px;
+            font-family: monospace;
+        }
+        
+        .copy-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            background: #084161;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        
+        .copy-btn:hover {
+            background: #086398;
+        }
+
+        /* Settings Modal */
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .settings-modal.active {
+            display: flex;
+        }
+        
+        .settings-modal-content {
+            background: #0073B7;
+            border-radius: 15px;
+            padding: 0;
+            width: 500px;
+            max-width: 90%;
+            max-height: 90vh;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            color: white;
+            overflow-y: auto;
+        }
+        
+        .settings-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .settings-modal-header h3 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .settings-section {
+            padding: 20px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .settings-section:last-child {
+            border-bottom: none;
+        }
+        
+        .settings-section h4 {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .settings-form-group {
+            margin-bottom: 15px;
+        }
+        
+        .settings-form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .settings-form-group input,
+        .settings-form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .settings-form-group input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.3);
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: #084161;
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        .theme-toggle-container {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .theme-option {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .theme-option:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .theme-option.active {
+            background: #084161;
+            border-color: #084161;
+        }
+        
+        .settings-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            padding: 20px 30px;
+            background: rgba(0,0,0,0.1);
+        }
+        
+        .settings-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .settings-btn.cancel {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .settings-btn.cancel:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .settings-btn.save {
+            background: #084161;
+            color: white;
+        }
+        
+        .settings-btn.save:hover {
+            background: #086398;
+        }
+        
+        .danger-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #dc3545;
+            color: white;
+            transition: background 0.2s;
+        }
+        
+        .danger-btn:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <img src="/static/logo.png" alt="KollabHub" />
+        
+            <h2>KollabHub</h2>
+        </div>
+        <div class="sidebar-menu">
+            <button class="active">
+                <span class="icon">👥</span>
+                Groups
+            </button>
+            <button>
+                <span class="icon">💬</span>
+                Direct Messages
+            </button>
+            <button>
+                <span class="icon">➕</span>
+                Invite People
+            </button>
+        </div>
+        
+        <!-- Current Conversation Box -->
+        <div class="current-conversation-box">
+            <div class="conversation-header">
+                <span class="icon">💬</span>
+                <span>Current Conversation</span>
+            </div>
+            <div class="conversation-info">
+                <img src="/static/Imsha.jpeg" alt="Imsha" class="conversation-avatar">
+                <span class="conversation-name">Imsha</span>
+            </div>
+        </div>
+        <div class="spacer"></div>
+        <div class="sidebar-footer">
+
+            <button>
+                <span class="icon">👤</span>
+                Profile
+            </button>
+            <a href="{% url 'logout' %}" class="sidebar-btn" style="display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; padding: 12px 16px; border-radius: 10px;">
+            <span class="icon">
+            <!-- Logout SVG icon -->
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M16 17L21 12L16 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M21 12H9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 19V17C12 15.8954 11.1046 15 10 15H5C3.89543 15 3 15.8954 3 17V19C3 20.1046 3.89543 21 5 21H10C11.1046 21 12 20.1046 12 19Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            </span>
+            Logout
+            </a>
+            <button>
+                <span class="icon">⚙️</span>
+                Settings
+            </button>
+        </div>
+    </div>
+    <div class="chat-container">
+        <div class="chat-header">
+        <div class="chat-header-left">
+            <img src="/static/Imsha.jpeg" alt="Imsha" />
+            <h2>Imsha</h2>
+        </div>
+        <div class="chat-header-actions">
+            <button title="Call">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff">
+                    <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.21.49 2.53.76 3.88.76a1 1 0 011 1v3.5a1 1 0 01-1 1C7.61 22 2 16.39 2 9.5a1 1 0 011-1H6.5a1 1 0 011 1c0 1.35.27 2.67.76 3.88a1 1 0 01-.21 1.11l-2.2 2.2z" fill="#2196f3"/>
+                </svg>
+            </button>
+            <button title="Video">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="#2196f3">
+                    <rect x="3" y="7" width="13" height="10" rx="2" fill="#2196f3"/>
+                    <polygon points="17,10 22,7 22,17 17,14" fill="#2196f3"/>
+                </svg>
+            </button>
+            <button title="Info">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="#2196f3">
+                    <circle cx="12" cy="12" r="10" fill="#2196f3"/>
+                    <rect x="11" y="10" width="2" height="6" rx="1" fill="#fff"/>
+                    <rect x="11" y="7" width="2" height="2" rx="1" fill="#fff"/>
+                </svg>
+            </button>
+        </div>
+        </div>
+        <div class="chat-window" id="chatWindow">
+            <!-- Messages will be dynamically added here -->
+        </div>
+        <div class="chat-input">
+            <img src="/static/Almas.jpeg" alt="Almas" />
+            <div class="input-box">
+                <button id="fileButton">📎</button>
+                <input type="text" id="messageInput" placeholder="#Message" />
+                <button id="emojiButton">😊</button>
+                <button>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                        <rect x="9" y="3" width="6" height="12" rx="3" fill="#fff"/>
+                        <rect x="11" y="17" width="2" height="4" rx="1" fill="#fff"/>
+                        <path d="M7 11v1a5 5 0 0 0 10 0v-1" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                </button>
+                <button id="sendButton">➤</button>
+            </div>
+        </div>
+        
+        <!-- File Upload Modal -->
+        <div class="file-modal" id="fileModal">
+            <div class="file-options">
+                <label class="file-option">
+                    📷 Images
+                    <input type="file" id="imageInput" accept="image/*" multiple>
+                </label>
+                <label class="file-option">
+                    🎥 Videos
+                    <input type="file" id="videoInput" accept="video/*" multiple>
+                </label>
+                <label class="file-option">
+                    📄 Documents
+                    <input type="file" id="documentInput" accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx" multiple>
+                </label>
+                <label class="file-option">
+                    📁 All Files
+                    <input type="file" id="allFilesInput" multiple>
+                </label>
+            </div>
+        </div>
+        
+        <!-- Emoji Picker -->
+        <div class="emoji-picker" id="emojiPicker">
+            <div class="emoji-grid">
+                <button class="emoji-item">😀</button>
+                <button class="emoji-item">😂</button>
+                <button class="emoji-item">😍</button>
+                <button class="emoji-item">😊</button>
+                <button class="emoji-item">😎</button>
+                <button class="emoji-item">😢</button>
+                <button class="emoji-item">😡</button>
+                <button class="emoji-item">😱</button>
+                <button class="emoji-item">😴</button>
+                <button class="emoji-item">🤔</button>
+                <button class="emoji-item">👍</button>
+                <button class="emoji-item">👎</button>
+                <button class="emoji-item">👏</button>
+                <button class="emoji-item">🙏</button>
+                <button class="emoji-item">❤️</button>
+                <button class="emoji-item">💔</button>
+                <button class="emoji-item">🔥</button>
+                <button class="emoji-item">⭐</button>
+                <button class="emoji-item">✅</button>
+                <button class="emoji-item">❌</button>
+                <button class="emoji-item">🎉</button>
+                <button class="emoji-item">💯</button>
+                <button class="emoji-item">🚀</button>
+                <button class="emoji-item">💡</button>
+            </div>
+        </div>
+
+        <!-- Invite People Modal -->
+        <div class="invite-modal" id="inviteModal">
+            <div class="invite-modal-content">
+                <div class="invite-modal-header">
+                    <h3>Invite People</h3>
+                    <button class="close-btn" id="closeInviteModal">&times;</button>
+                </div>
+                <form class="invite-form" id="inviteForm">
+                    <input type="email" placeholder="Enter email address" required>
+                    <input type="text" placeholder="Add a personal message (optional)">
+                    <div class="invite-options">
+                        <div class="invite-option" data-role="member">
+                            <div>👤</div>
+                            <div>Member</div>
+                        </div>
+                        <div class="invite-option" data-role="admin">
+                            <div>👑</div>
+                            <div>Admin</div>
+                        </div>
+                    </div>
+                    <button type="submit">Send Invite</button>
+                </form>
+                
+                <div class="invite-link-section">
+                    <h4>Or share this invite link:</h4>
+                    <div class="invite-link-container">
+                        <input type="text" class="invite-link-input" id="inviteLink" readonly value="https://kollabhub.com/invite/abc123xyz">
+                        <button class="copy-btn" id="copyInviteLink">Copy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="settings-modal" id="settingsModal">
+            <div class="settings-modal-content">
+                <div class="settings-modal-header">
+                    <h3>Settings</h3>
+                    <button class="close-btn" id="closeSettingsModal">&times;</button>
+                </div>
+                
+                <!-- Account Settings -->
+                <div class="settings-section">
+                    <h4>Account Settings</h4>
+                    <div class="settings-form-group">
+                        <label for="emailInput">Email Address</label>
+                        <input type="email" id="emailInput" placeholder="your.email@example.com">
+                    </div>
+                    <div class="settings-form-group">
+                        <label for="passwordInput">Change Password</label>
+                        <input type="password" id="passwordInput" placeholder="Enter new password">
+                    </div>
+                    <div class="settings-form-group">
+                        <button class="danger-btn" id="deleteAccountBtn">Delete Account</button>
+                    </div>
+                </div>
+
+                
+                <!-- Privacy & Security -->
+                <div class="settings-section">
+                    <h4>Privacy & Security</h4>
+                    <div class="settings-form-group">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="onlineStatusToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span>Show Online Status</span>
+                    </div>
+                    <div class="settings-form-group">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="lastSeenToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span>Show Last Seen</span>
+                    </div>
+                    <div class="settings-form-group">
+                        <label for="blockedUsers">Blocked Users</label>
+                        <select id="blockedUsers" multiple>
+                            <option value="">No blocked users</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Theme -->
+                <div class="settings-section">
+                    <h4>Theme</h4>
+                    <div class="theme-toggle-container">
+                        <div class="theme-option active" data-theme="light">
+                            <div class="icon">☀️</div>
+                            <div class="label">Light Mode</div>
+                        </div>
+                        <div class="theme-option" data-theme="dark">
+                            <div class="icon">🌙</div>
+                            <div class="label">Dark Mode</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Language -->
+                <div class="settings-section">
+                    <h4>Language</h4>
+                    <div class="settings-form-group">
+                        <select id="languageSelect">
+                            <option value="en">English</option>
+                            <option value="ur">Urdu</option>
+                            <option value="hi">Hindi</option>
+                            <option value="ar">Arabic</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Chat Settings -->
+                <div class="settings-section">
+                    <h4>Chat Settings</h4>
+                    <div class="settings-form-group">
+                        <label for="fontSizeSelect">Font Size</label>
+                        <select id="fontSizeSelect">
+                            <option value="small">Small</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="large">Large</option>
+                        </select>
+                    </div>
+                    <div class="settings-form-group">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="timestampsToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span>Show Timestamps</span>
+                    </div>
+                </div>
+
+                <!-- Data & Storage -->
+                <div class="settings-section">
+                    <h4>Data & Storage</h4>
+                    <div class="settings-form-group">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoDownloadToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span>Media Auto-Download</span>
+                    </div>
+                    <div class="settings-form-group">
+                        <button class="danger-btn" id="clearCacheBtn">Clear Cache</button>
+                    </div>
+                    <div class="settings-form-group">
+                        <label>Storage Usage: <span id="storageUsage">0 MB</span></label>
+                    </div>
+                </div>
+
+                <div class="settings-actions">
+                    <button class="settings-btn cancel" id="cancelSettings">Cancel</button>
+                    <button class="settings-btn save" id="saveSettings">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const messages = [
+            {
+                id: 1,
+                sender: "Imsha",
+                avatar: "/static/Imsha.jpeg",
+                text: "Hey Almas! How's your project going?",
+                side: "left",
+            },
+            {
+                id: 2,
+                sender: "You",
+                avatar: "/static/Almas.jpeg",
+                text: "Hi Imsha! It's going well, just finishing up some final touches. How about you?",
+                side: "right",
+            },
+            {
+                id: 3,
+                sender: "Imsha",
+                avatar: "/static/Imsha.jpeg",
+                text: "Pretty good! I'm almost done with my part too. Do you need any help with anything?",
+                side: "left",
+            },
+            {
+                id: 4,
+                sender: "You",
+                avatar: "/static/Almas.jpeg",
+                text: "Thanks for asking! I think I'm good for now. Let me know if you need anything from my side.",
+                side: "right",
+            },
+        ];
+
+        const chatWindow = document.getElementById('chatWindow');
+
+        function renderMessages() {
+            chatWindow.innerHTML = '';
+            messages.forEach(msg => {
+                const messageRow = document.createElement('div');
+                messageRow.className = `message-row ${msg.side}`;
+                if (msg.side === "left") {
+                    messageRow.innerHTML = `<img src="${msg.avatar}" alt="${msg.sender}" />
+                                            <div>
+                                                <span class="sender">${msg.sender}</span>
+                                                <div class="message dark">${msg.text}</div>
+                                            </div>`;
+                } else {
+                    messageRow.innerHTML = `<div>
+                                                <span class="sender">${msg.sender}</span>
+                                                <div class="message blue">${msg.text}</div>
+                                            </div>
+                                            <img src="${msg.avatar}" alt="${msg.sender}" />`;
+                }
+                chatWindow.appendChild(messageRow);
+            });
+        }
+
+        document.getElementById('sendButton').addEventListener('click', () => {
+            const messageInput = document.getElementById('messageInput');
+            const newMessage = {
+                id: messages.length + 1,
+                sender: "You",
+                avatar: "/static/Almas.jpeg",
+                text: messageInput.value,
+                side: "right",
+            };
+            messages.push(newMessage);
+            messageInput.value = '';
+            renderMessages();
+        });
+
+        renderMessages();
+        
+        // File Upload Functionality
+        const fileButton = document.getElementById('fileButton');
+        const fileModal = document.getElementById('fileModal');
+        const emojiButton = document.getElementById('emojiButton');
+        const emojiPicker = document.getElementById('emojiPicker');
+        const messageInput = document.getElementById('messageInput');
+        
+        // Toggle file modal
+        fileButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileModal.classList.toggle('active');
+            emojiPicker.classList.remove('active');
+        });
+        
+        // Toggle emoji picker
+        emojiButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            emojiPicker.classList.toggle('active');
+            fileModal.classList.remove('active');
+        });
+        
+        // Close modals when clicking outside
+        document.addEventListener('click', () => {
+            fileModal.classList.remove('active');
+            emojiPicker.classList.remove('active');
+        });
+        
+        // Prevent modal from closing when clicking inside
+        fileModal.addEventListener('click', (e) => e.stopPropagation());
+        emojiPicker.addEventListener('click', (e) => e.stopPropagation());
+        
+        // Handle file uploads
+        function handleFileUpload(files, type) {
+            Array.from(files).forEach(file => {
+                const newMessage = {
+                    id: messages.length + 1,
+                    sender: "You",
+                    avatar: "/static/Almas.jpeg",
+                    text: `📎 ${file.name} (${type})`,
+                    side: "right",
+                };
+                messages.push(newMessage);
+            });
+            renderMessages();
+            fileModal.classList.remove('active');
+        }
+        
+        // File input event listeners
+        document.getElementById('imageInput').addEventListener('change', (e) => {
+            handleFileUpload(e.target.files, 'Image');
+        });
+        
+        document.getElementById('videoInput').addEventListener('change', (e) => {
+            handleFileUpload(e.target.files, 'Video');
+        });
+        
+        document.getElementById('documentInput').addEventListener('change', (e) => {
+            handleFileUpload(e.target.files, 'Document');
+        });
+        
+        document.getElementById('allFilesInput').addEventListener('change', (e) => {
+            handleFileUpload(e.target.files, 'File');
+        });
+        
+        // Emoji functionality
+        document.querySelectorAll('.emoji-item').forEach(emoji => {
+            emoji.addEventListener('click', () => {
+                messageInput.value += emoji.textContent;
+                emojiPicker.classList.remove('active');
+            });
+        });
+
+        // Invite People Modal Functionality
+        const inviteButton = document.querySelector('.sidebar-menu button:nth-child(3)');
+        const inviteModal = document.getElementById('inviteModal');
+        const closeInviteModal = document.getElementById('closeInviteModal');
+        const inviteForm = document.getElementById('inviteForm');
+        const inviteOptions = document.querySelectorAll('.invite-option');
+        let selectedRole = 'member';
+
+        // Open invite modal
+        inviteButton.addEventListener('click', () => {
+            inviteModal.classList.add('active');
+        });
+
+        // Close invite modal
+        closeInviteModal.addEventListener('click', () => {
+            inviteModal.classList.remove('active');
+        });
+
+        // Close modal when clicking outside
+        inviteModal.addEventListener('click', (e) => {
+            if (e.target === inviteModal) {
+                inviteModal.classList.remove('active');
+            }
+        });
+
+        // Handle role selection
+        inviteOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                inviteOptions.forEach(opt => opt.style.background = 'rgba(255,255,255,0.1)');
+                option.style.background = 'rgba(255,255,255,0.3)';
+                selectedRole = option.dataset.role;
+            });
+        });
+
+        // Handle form submission
+        inviteForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = inviteForm.querySelector('input[type="email"]').value;
+            const message = inviteForm.querySelector('input[type="text"]').value;
+            
+            // Here you would typically send the invitation to your backend
+            console.log('Sending invite to:', email);
+            console.log('Role:', selectedRole);
+            console.log('Message:', message || 'No message');
+            
+            // Show success message
+            alert(`Invitation sent to ${email} as ${selectedRole}`);
+            
+            // Reset form and close modal
+            inviteForm.reset();
+            inviteModal.classList.remove('active');
+            
+            // Reset role selection
+            inviteOptions.forEach(opt => opt.style.background = 'rgba(255,255,255,0.1)');
+            selectedRole = 'member';
+        });
+        function copyInviteLink() {
+            const inviteLink = "http://example.com/invite"; // Replace with the actual invite link
+            navigator.clipboard.writeText(inviteLink).then(() => {
+                alert("Invite link copied to clipboard!");
+            }).catch(err => {
+                console.error("Could not copy text: ", err);
+            });
+        }
+
+        // Settings Modal Functionality
+        const settingsButton = document.querySelector('.sidebar-footer button:nth-child(3)');
+        const settingsModal = document.getElementById('settingsModal');
+        const closeSettingsModal = document.getElementById('closeSettingsModal');
+        const cancelSettings = document.getElementById('cancelSettings');
+        const saveSettings = document.getElementById('saveSettings');
+        const themeOptions = document.querySelectorAll('.theme-option');
+        let currentTheme = 'light';
+
+        // Open settings modal
+        settingsButton.addEventListener('click', () => {
+            settingsModal.classList.add('active');
+            loadSettings();
+        });
+
+        // Close settings modal
+        closeSettingsModal.addEventListener('click', () => {
+            settingsModal.classList.remove('active');
+        });
+
+        cancelSettings.addEventListener('click', () => {
+            settingsModal.classList.remove('active');
+        });
+
+        // Close modal when clicking outside
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                settingsModal.classList.remove('active');
+            }
+        });
+
+        // Theme selection
+        themeOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                themeOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                currentTheme = option.dataset.theme;
+            });
+        });
+
+        // Load saved settings
+        function loadSettings() {
+            const savedSettings = JSON.parse(localStorage.getItem('chatSettings')) || {};
+            
+            // Account Settings
+            if (savedSettings.email) {
+                document.getElementById('emailInput').value = savedSettings.email;
+            }
+            
+            // Notifications
+            if (savedSettings.soundNotifications !== undefined) {
+                document.getElementById('soundToggle').checked = savedSettings.soundNotifications;
+            }
+            if (savedSettings.desktopNotifications !== undefined) {
+                document.getElementById('desktopToggle').checked = savedSettings.desktopNotifications;
+            }
+            if (savedSettings.muteConversations !== undefined) {
+                document.getElementById('muteToggle').checked = savedSettings.muteConversations;
+            }
+            
+            // Privacy & Security
+            if (savedSettings.onlineStatus !== undefined) {
+                document.getElementById('onlineStatusToggle').checked = savedSettings.onlineStatus;
+            }
+            if (savedSettings.lastSeen !== undefined) {
+                document.getElementById('lastSeenToggle').checked = savedSettings.lastSeen;
+            }
+            
+            // Theme
+            if (savedSettings.theme) {
+                currentTheme = savedSettings.theme;
+                themeOptions.forEach(opt => {
+                    opt.classList.remove('active');
+                    if (opt.dataset.theme === currentTheme) {
+                        opt.classList.add('active');
+                    }
+                });
+            }
+            
+            // Language
+            if (savedSettings.language) {
+                document.getElementById('languageSelect').value = savedSettings.language;
+            }
+            
+            // Chat Settings
+            if (savedSettings.fontSize) {
+                document.getElementById('fontSizeSelect').value = savedSettings.fontSize;
+            }
+            if (savedSettings.showTimestamps !== undefined) {
+                document.getElementById('timestampsToggle').checked = savedSettings.showTimestamps;
+            }
+            
+            // Data & Storage
+            if (savedSettings.mediaAutoDownload !== undefined) {
+                document.getElementById('autoDownloadToggle').checked = savedSettings.mediaAutoDownload;
+            }
+            if (savedSettings.storageUsage) {
+                document.getElementById('storageUsage').textContent = savedSettings.storageUsage;
+            }
+        }
+
+        // Save settings
+        saveSettings.addEventListener('click', () => {
+            const settings = {
+                // Account Settings
+                email: document.getElementById('emailInput').value,
+                
+                
+                // Notifications
+                soundNotifications: document.getElementById('soundToggle').checked,
+                desktopNotifications: document.getElementById('desktopToggle').checked,
+                muteConversations: document.getElementById('muteToggle').checked,
+                
+                // Privacy & Security
+                onlineStatus: document.getElementById('onlineStatusToggle').checked,
+                lastSeen: document.getElementById('lastSeenToggle').checked,
+                
+                // Theme
+                theme: currentTheme,
+                
+                // Language
+                language: document.getElementById('languageSelect').value,
+                
+                // Chat Settings
+                fontSize: document.getElementById('fontSizeSelect').value,
+                showTimestamps: document.getElementById('timestampsToggle').checked,
+                
+                // Data & Storage
+                mediaAutoDownload: document.getElementById('autoDownloadToggle').checked,
+                storageUsage: document.getElementById('storageUsage').textContent
+            };
+            
+            localStorage.setItem('chatSettings', JSON.stringify(settings));
+            
+            // Apply theme
+            applyTheme(settings.theme);
+            
+            // Apply font size
+            applyFontSize(settings.fontSize);
+            
+            alert('Settings saved successfully!');
+            settingsModal.classList.remove('active');
+        });
+
+        // Apply font size function
+        function applyFontSize(size) {
+            const chatWindow = document.getElementById('chatWindow');
+            switch(size) {
+                case 'small':
+                    chatWindow.style.fontSize = '14px';
+                    break;
+                case 'medium':
+                    chatWindow.style.fontSize = '16px';
+                    break;
+                case 'large':
+                    chatWindow.style.fontSize = '18px';
+                    break;
+            }
+        }
+
+        
+        // Handle delete account
+        document.getElementById('deleteAccountBtn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                alert('Account deletion request sent. Please check your email for confirmation.');
+            }
+        });
+
+        // Handle clear cache
+        document.getElementById('clearCacheBtn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear cache? This will remove temporary files.')) {
+                // Simulate cache clearing
+                setTimeout(() => {
+                    document.getElementById('storageUsage').textContent = '0 MB';
+                    alert('Cache cleared successfully!');
+                }, 1000);
+            }
+        });
+
+        // Apply theme function
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.body.style.backgroundColor = '#1a1a1a';
+                document.body.style.color = '#ffffff';
+                // Add more dark theme styles as needed
+            } else {
+                document.body.style.backgroundColor = '';
+                document.body.style.color = '';
+                // Reset to light theme
+            }
+        }
+
+        // Load settings on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedSettings = JSON.parse(localStorage.getItem('chatSettings')) || {};
+            if (savedSettings.theme) {
+                applyTheme(savedSettings.theme);
+            }
+        });
+    </script>
+</body>
+</html>
