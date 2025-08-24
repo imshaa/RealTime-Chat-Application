@@ -1,0 +1,1037 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KollabHub Landing Page</title>
+<style>
+  /* Reset */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: rgb(238, 249, 251);
+    color: #0F172A;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Scroll smooth for anchor links */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Container */
+  .container {
+    width: min(90%, 1100px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Header */
+  header {
+    padding: 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo-part {
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1.25rem;
+  }
+  .logo-part span:first-child {
+    background-color: #00C2FF;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    margin-right: 6px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  nav {
+    display: flex;
+    gap: 1.7rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  nav a {
+    color: #0F172A;
+    transition: color 0.3s ease;
+  }
+  nav a:hover, nav a:focus {
+    color:#2196f3;
+    outline: none;
+  }
+  .btn-signup {
+    background: transparent; /* transparent background */
+    color: #333;             /* dark text */
+    border: 1px solid #333;  /* outline style */
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .btn-signup:hover {
+    background: #f0f0f0;
+  }
+
+  .btn-login {
+    background: #007bff;   /* blue background */
+    color: #fff;           /* white text */
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .btn-login:hover, .btn-login:focus {
+    background: linear-gradient(90deg, #0099FF 0%, #005FCC 100%);
+    outline: none;
+  }
+
+  /* Hero section */
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: center;
+    padding-bottom: 3rem;
+    padding-top: 3.5rem;
+  }
+  .hero-text {
+    flex: 1 1 320px;
+  }
+  .hero-text .highlight-title {
+    background-color: #00C2FF;
+    padding: 0.125rem 0.5rem;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 0.6rem;
+    display: inline-block;
+    color: white;
+    border-radius: 3px;
+  }
+  .hero-text h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+ 
+  .hero-text p {
+    color: #475569;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    max-width: 400px;
+  }
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .btn-getstarted {
+    background: linear-gradient(90deg, #00C2FF 0%, #0078FF 100%);
+    color: white;
+    padding: 0.65rem 1.8rem;
+    font-weight: 700;
+    font-size: 1rem;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow:
+      0 4px 8px rgba(0,194,255,0.4),
+      0 0 20px rgba(0,194,255,0.5);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+  .btn-getstarted:hover, .btn-getstarted:focus {
+    background: linear-gradient(90deg, #0099FF 0%, #005FCC 100%);
+    box-shadow:
+      0 6px 12px rgba(0,122,204,0.7),
+      0 0 30px rgba(0,122,204,0.8);
+    outline: none;
+  }
+  .btn-watch {
+    background: white;
+    border: 1.5px solid #0F172A;
+    padding: 0.62rem 1.8rem;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #0F172A;
+    box-shadow:
+      0 1px 3px rgb(0 0 0 / 0.1),
+      0 1px 2px rgb(0 0 0 / 0.06);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  .btn-watch:hover, .btn-watch:focus {
+    background-color: #F1F5F9;
+    border-color: #0078FF;
+    outline: none;
+  }
+  .btn-watch svg {
+    stroke: #0F172A;
+    width: 20px;
+    height: 20px;
+  }
+  /* Hero image */
+  .hero-image {
+    flex: 0 1 380px;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgb(0 0 0 / 0.15);
+    overflow: hidden;
+  }
+  /* Provide fallback for missing images */
+  .hero-image img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Section: Everything your team needs */
+  section.features-intro {
+    text-align: center;
+    padding: 4rem 1rem 3rem;
+  }
+  section.features-intro h2 {
+    font-weight: 700;
+    font-size: 1.75rem;
+    margin: 0 0 0.4rem;
+  }
+  section.features-intro p {
+    font-size: 1rem;
+    color: #64748B;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  /* Features grid */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+    gap: 1.8rem 2.5rem;
+    padding: 1rem 1rem 4rem;
+    max-width: 1100px;
+    margin: 0 auto 2rem;
+  }
+  .feature-card {
+    background: #F8FAFC;
+    border-radius: 14px;
+    padding: 1.6rem 1.8rem;
+    box-shadow:
+      0 3px 8px rgb(0 0 0 / 0.1);
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    cursor: default;
+    transition: box-shadow 0.25s ease;
+  }
+  .feature-card:hover, .feature-card:focus-within {
+    box-shadow:
+      0 6px 20px rgb(0 0 0 / 0.15);
+  }
+  .feature-icon {
+    min-width: 40px;
+    min-height: 40px;
+    background-color: #E0F2FE;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .feature-icon svg {
+    stroke: #0284C7;
+    width: 22px;
+    height: 22px;
+  }
+  .feature-content h3 {
+    margin: 0 0 0.3rem;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .feature-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #475569;
+  }
+
+  /* Section: Beautiful. Intuitive. Powerful. */
+  section.powerful-intro {
+    text-align: center;
+    padding: 1.5rem 1rem 3rem;
+  }
+  section.powerful-intro h2 {
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-bottom: 0.2rem;
+  }
+  section.powerful-intro p {
+    font-size: 0.9rem;
+    color: #64748B;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+
+  /* Image display below powerful intro */
+  .powerful-images {
+    max-width: 1100px;
+    margin: 1.5rem auto 3.5rem;
+    display: grid;
+    
+    gap: 1.7rem;
+    grid-template-columns: 1fr;
+  }
+  .powerful-images > img.main-image {
+  width: 100%;          /* shrink from 100% to 80% */
+  /* max-width: 850px;   */
+  margin: 0 auto;      /* center the smaller image */
+  display: block;
+  max-height: 450px;        /* control height */
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 14px 30px rgb(0 0 0 / 0.15);
+}
+  
+  /* Sub cards container */
+  .powerful-subcards {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+    gap: 1.5rem;
+  }
+  .powerful-subcard {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+    padding: 1.2rem;
+    cursor: default;
+    transition: box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.7rem;
+  }
+  .powerful-subcard:hover, .powerful-subcard:focus-within {
+    box-shadow: 0 8px 22px rgb(0 0 0 / 0.18);
+  }
+  .powerful-subcard img {
+    border-radius: 10px;
+    object-fit: cover;
+    height: 120px;
+    width: 100%;
+  }
+  .powerful-subcard h3 {
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin: 0.4rem 0 0;
+  }
+  /* Text content inside subcard */
+  .powerful-subcard p {
+    margin: 0 0 0.8rem;
+    font-size: 0.9rem;
+    color: #475569;
+  }
+
+  /* Section: Meet your team AI assistant */
+  section.ai-assistant {
+    background: linear-gradient(120deg, #DBF0FF 0%, #84C1FF 100%);
+    padding: 3rem 1rem 4rem;
+  }
+  .ai-assistant-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.2rem;
+  }
+  .ai-left, .ai-right {
+    background: white;
+    border-radius: 24px;
+    box-shadow:
+      0 10px 25px rgb(56 110 234 / 0.3);
+    padding: 2rem 2.2rem 2.5rem;
+    flex: 1 1 380px;
+    display: flex;
+    flex-direction: column;
+  }
+  .ai-left {
+    max-width: 420px;
+  }
+  .ai-left .tag {
+    background-color: #00C2FF;
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 4px 12px;
+    border-radius: 14px;
+    align-self: flex-start;
+    margin-bottom: 1rem;
+  }
+  .ai-left h2 {
+    font-weight: 700;
+    font-size: 1.7rem;
+    margin: 0 0 1.2rem;
+    line-height: 1.2;
+  }
+  .ai-left p {
+    color: #475569;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    margin-bottom: 1.5rem;
+  }
+  .ai-feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .ai-feature-list li {
+    display: flex;
+    gap: 1rem;
+    align-items: start;
+  }
+  .ai-feature-list svg {
+    stroke: #00C2FF;
+    margin-top: 6px;
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+  }
+  .ai-feature-content {
+    font-size: 0.9rem;
+    color: #334155;
+  }
+  .ai-left a.cta-link {
+    margin-top: auto;
+    align-self: flex-start;
+    color: #00C2FF;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .ai-left a.cta-link:hover, .ai-left a.cta-link:focus {
+    text-decoration: underline;
+    outline: none;
+  }
+
+  /* AI right chat simulation */
+  .chat-window {
+    background: #0078FF;
+    box-shadow:
+      0 20px 60px rgba(0,120,255,0.5);
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 480px;
+    height: 420px;
+    padding: 1.6rem 1.6rem 0.6rem;
+    position: relative;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .chat-header {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255 255 255 / 0.25);
+  }
+  .chat-header .avatar {
+    background-color: #00C2FF;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    user-select: none;
+    box-shadow:
+      0 0 8px #00C2FF;
+  }
+  .chat-header .user-info {
+    flex: 1;
+  }
+  .chat-header .user-info h3 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+  .chat-header .user-info p {
+    margin: 0;
+    font-size: 0.8rem;
+    opacity: 0.8;
+  }
+  .chat-header .status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ffffff;
+   
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 1rem;
+    padding-right: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .chat-message {
+    background: rgba(255 255 255 / 0.2);
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+    width: fit-content;
+    max-width: 78%;
+    box-shadow:
+      inset 0 0 8px rgba(255 255 255 / 0.3);
+    font-size: 0.9rem;
+    white-space: pre-line;
+  }
+
+  /* User chat bubble style */
+  .chat-message.user {
+    background: rgba(255 255 255 / 0.4);
+    align-self: flex-end;
+    color: #0F172A;
+  }
+  /* Scrollbar styling */
+  .chat-messages::-webkit-scrollbar {
+    width: 6px;
+  }
+  .chat-messages::-webkit-scrollbar-track {
+    background: rgba(255 255 255 / 0.1);
+  }
+  .chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(255 255 255 / 0.5);
+    border-radius: 10px;
+  }
+
+  .chat-input-area {
+    border-top: 1px solid rgba(255 255 255 / 0.25);
+    padding: 0.6rem 0;
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+  }
+  .chat-input {
+    flex: 1;
+    border: none;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    outline: none;
+    appearance: none;
+  }
+  .chat-input::placeholder {
+    color: rgba(255 255 255 / 0.7);
+  }
+  .chat-send-btn {
+    background: #00C2FF;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-weight: 700;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    box-shadow:
+      0 4px 12px rgba(0,194,255,0.6);
+    transition: background 0.3s ease;
+  }
+  .chat-send-btn:disabled {
+    cursor: not-allowed;
+    background: rgba(0,194,255,0.35);
+    box-shadow: none;
+  }
+  .chat-send-btn:not(:disabled):hover, .chat-send-btn:focus {
+    background: #0099FF;
+    outline: none;
+  }
+
+  /* Section: About Us */
+  section.about-us {
+    padding: 4rem 1rem 5rem;
+    background: #F9FAFB;
+  }
+  .about-container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .about-tag {
+    background-color: #00C2FF;
+    color: white;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 5px 14px;
+    border-radius: 18px;
+    margin-bottom: 1rem;
+    display: inline-block;
+  }
+  .about-title {
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    max-width: 500px;
+  }
+  .about-description {
+    font-size: 0.95rem;
+    color: #475569;
+    line-height: 1.5;
+    max-width: 700px;
+  }
+  .about-subtitle {
+    font-weight: 600;
+    margin-top: 2.3rem;
+    font-size: 1.1rem;
+    color: #0F172A;
+  }
+  .about-paragraph {
+    margin-top: 0.7rem;
+    margin-bottom: 0;
+  }
+
+  /* Footer */
+  footer {
+    background-color: #0F172A;
+    color: white;
+    padding: 2.8rem 1rem 2rem;
+  }
+
+  .footer-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem 1.7rem;
+    justify-content: space-between;
+  }
+  .footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 200px;
+  }
+  .footer-left .logo-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    font-size: 1.3rem;
+  }
+  .footer-left .logo-footer span:first-child {
+    background-color: #00C2FF;
+    padding: 5px 11px;
+    border-radius: 4px;
+    color: white;
+  }
+  .footer-left p {
+    color: #94A3B8;
+    font-size: 0.85rem;
+    max-width: 280px;
+  }
+  .footer-navs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5rem 4rem;
+  }
+  .footer-nav {
+    min-width: 130px;
+  }
+  .footer-nav h4 {
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+  .footer-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .footer-nav ul li a {
+    font-size: 0.9rem;
+    color: #94A3B8;
+    display: inline-block;
+    padding: 4px 0;
+    transition: color 0.3s ease;
+  }
+  .footer-nav ul li a:hover, .footer-nav ul li a:focus {
+    color: #00C2FF;
+    outline: none;
+  }
+  .footer-bottom {
+    margin-top: 2rem;
+    font-size: 0.8rem;
+    color: #64748B;
+    text-align: center;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 720px) {
+    header nav {
+      display: none;
+    }
+    .hero {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .powerful-images {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .powerful-subcards {
+      grid-template-columns: 1fr;
+    }
+    .ai-assistant-container {
+      flex-direction: column;
+    }
+    .ai-right {
+      max-width: 100%;
+      height: 400px;
+    }
+  }
+</style>
+</head>
+<body>
+<header class="container" role="banner">
+  <div class="logo-part" aria-label="Kollab Hub Logo">
+    <span>Kollab</span><span>Hub</span>
+  </div>
+  <nav aria-label="Primary navigation">
+    <a href="#features">Features</a>
+    <a href="#overview">Overview</a>
+    <a href="#ai-powered">AI-Powered</a>
+    <a href="#about">About Us</a>
+  </nav>
+  
+ <div class="auth-buttons">
+  <a href="{% url 'signup' %}" class="btn-signup" aria-label="Signup for Kollab Hub">Sign Up</a>
+<a href="{% url 'login' %}" class="btn-login" aria-label="Login to Kollab Hub">Login</a>
+
+  </div>
+</header>
+
+<main>
+  <section class="container hero" aria-labelledby="hero-title">
+    <div class="hero-text">
+      <div class="highlight-title">KollabHub</div>
+      <h1>Unify. Transform. Dominate.<br>One Workspace.</h1>
+      <p>
+        The complete workspace for modern teams. Messaging, calls, file sharing,
+        project management, and AI assistant — everything you need in one seamless platform.
+      </p>
+      <div class="hero-buttons">
+        <a href="{% url 'login' %}" class="btn-getstarted" aria-label="Get Started with Kollab Hub">Get Started</a>
+        {% comment %} <button class="btn-getstarted" aria-label="Get Started with Kollab Hub">Get Started</button> {% endcomment %}
+       <a href="#overview" class="btn-watch" aria-label="Watch Kollab Hub in Action">
+  <svg aria-hidden="true" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20" focusable="false" role="img">
+    <path d="M14.752 11.168l-6.518-3.75v7.472l6.518-3.722z"></path>
+    <circle cx="12" cy="12" r="10"></circle>
+  </svg>
+  Watch in Action
+</a>
+      </div>
+    </div>
+    <div class="hero-image" role="img" aria-label="Young man sitting on a desk using desktop computer with colleagues in background modern office environment">
+      <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/2e31467a-5f3c-4fbf-831c-19c638b2f133.png" alt="Young man sitting on a desk using desktop computer with colleagues in background modern office environment" onerror="this.style.display='none'" />
+    </div>
+  </section>
+
+  <section id="features" class="features-intro" aria-labelledby="features-title">
+    <h2 id="features-title">Everything your team needs in one place</h2>
+    <p>KollabHub combines all your essential collaboration tools into a single, seamless platform.</p>
+  </section>
+
+  <section class="features-grid">
+    <article class="feature-card" tabindex="0" aria-labelledby="feature1-title" aria-describedby="feature1-desc">
+      <div class="feature-icon" aria-hidden="true">
+        <svg stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="#0284C7" fill="none" viewBox="0 0 24 24" width="22" height="22">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 6v6l4 2"></path>
+        </svg>
+      </div>
+      <div class="feature-content">
+        <h3 id="feature1-title">Real-time Messaging</h3>
+        <p id="feature1-desc">Send messages and emojis instantly. Integrate with your existing tools and get notified.</p>
+      </div>
+    </article>
+    <article class="feature-card" tabindex="0" aria-labelledby="feature2-title" aria-describedby="feature2-desc">
+      <div class="feature-icon" aria-hidden="true">
+        <svg stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="#0284C7" fill="none" viewBox="0 0 24 24" width="22" height="22">
+          <rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect>
+          <path d="M16 6v12"></path>
+          <path d="M8 6v12"></path>
+        </svg>
+      </div>
+      <div class="feature-content">
+        <h3 id="feature2-title">Workspace Management</h3>
+        <p id="feature2-desc">Create multiple workspaces for different projects and invite team members with ease.</p>
+      </div>
+    </article>
+    <article class="feature-card" tabindex="0" aria-labelledby="feature3-title" aria-describedby="feature3-desc">
+      <div class="feature-icon" aria-hidden="true">
+        <svg stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="#0284C7" fill="none" viewBox="0 0 24 24" width="22" height="22">
+          <path d="M21 15a2 2 0 0 1-2 2h-4l-3 3v-3H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          <line x1="9" y1="10" x2="9" y2="10"></line>
+          <line x1="9" y1="14" x2="9" y2="14"></line>
+          <line x1="13" y1="12" x2="13" y2="12"></line>
+        </svg>
+      </div>
+      <div class="feature-content">
+        <h3 id="feature3-title">Audio & Video Calls</h3>
+        <p id="feature3-desc">High-quality audio and video conferences with easy sharing and recording options.</p>
+      </div>
+    </article>
+    <article class="feature-card" tabindex="0" aria-labelledby="feature4-title" aria-describedby="feature4-desc">
+      <div class="feature-icon" aria-hidden="true">
+        <svg stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="#0284C7" fill="none" viewBox="0 0 24 24" width="22" height="22">
+          <path d="M4 4h16v16H4z"></path>
+          <path d="M12 12h4v4h-4z"></path>
+        </svg>
+      </div>
+      <div class="feature-content">
+        <h3 id="feature4-title">Media & File Sharing</h3>
+        <p id="feature4-desc">Share documents, videos, and images with your team easily and securely in real-time.</p>
+      </div>
+    </article>
+    <article class="feature-card" tabindex="0" aria-labelledby="feature5-title" aria-describedby="feature5-desc">
+      <div class="feature-icon" aria-hidden="true">
+        <svg stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="#0284C7" fill="none" viewBox="0 0 24 24" width="22" height="22">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="3" y1="9" x2="21" y2="9"></line>
+          <line x1="9" y1="21" x2="9" y2="9"></line>
+        </svg>
+      </div>
+      <div class="feature-content">
+        <h3 id="feature5-title">Visual Task Boards</h3>
+        <p id="feature5-desc">Organize tasks with customizable boards, lists, and cards to track progress visually.</p>
+      </div>
+    </article>
+    <article class="feature-card" tabindex="0" aria-labelledby="feature6-title" aria-describedby="feature6-desc">
+      <div class="feature-icon" aria-hidden="true">
+        <svg stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="#0284C7" fill="none" viewBox="0 0 24 24" width="22" height="22">
+          <path d="M12 20v-6"></path>
+          <path d="M6 14v2a6 6 0 0 0 12 0v-2"></path>
+          <circle cx="12" cy="10" r="4"></circle>
+        </svg>
+      </div>
+      <div class="feature-content">
+        <h3 id="feature6-title">AI Work Assistant</h3>
+        <p id="feature6-desc">Intelligent assistant that helps with task planning, meeting summaries, and more.</p>
+      </div>
+    </article>
+  </section>
+
+  <section id="overview" class="powerful-intro" aria-labelledby="powerful-title">
+    <h2 id="powerful-title">Beautiful. Intuitive. Powerful.</h2>
+    <p>See how KollabHub transforms the way your team works together.</p>
+  </section>
+
+  <section class="powerful-images container" aria-label="Overview images">
+    <img class="main-image" src="{% static "land.jpg" %}" alt="Modern open-plan office with multiple teams collaborating at desks under bright lighting and spacious layout" onerror="this.style.display='none'" />
+    <div class="powerful-subcards" role="list">
+      <article class="powerful-subcard" tabindex="0" role="listitem" aria-labelledby="sti-title">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/acc0e249-3dfa-4f83-b26d-2d2ca1105405.png" alt="Collage of popular applications icons on a keyboard representing real-time messaging and app integrations" onerror="this.style.display='none'" />
+        <h3 id="sti-title">Real-time Messaging</h3>
+        <p>Integration with popular platforms enables smooth chatting, sharing, and notifications for your team.</p>
+      </article>
+      <article class="powerful-subcard" tabindex="0" role="listitem" aria-labelledby="visual-task-title">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a80da0dd-e6ca-4eee-9abf-3cd999a1ccd1.png" alt="Close-up of smartphone showing task board interface next to keyboard with focus on visual task boards in KollabHub" onerror="this.style.display='none'" />
+        <h3 id="visual-task-title">Visual Task Boards</h3>
+        <p>Organize your workflow visually, prioritize tasks and collaborate effectively with your team.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="ai-powered" class="ai-assistant" aria-labelledby="ai-section-title">
+    <div class="container ai-assistant-container">
+      <div class="ai-left">
+        <span class="tag">AI powered</span>
+        <h2 id="ai-section-title">Meet your team's AI assistant</h2>
+        <p>Our intelligent assistant helps your team stay focused, organize, and communicate effectively by suggesting tasks, themes, and summarizing chat threads.</p>
+        <ul class="ai-feature-list">
+          <li>
+            <svg stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke="#00C2FF" fill="none" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <div class="ai-feature-content"><strong>Smart Summaries:</strong> Get a summarized overview of long discussions and meetings.</div>
+          </li>
+          <li>
+            <svg stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke="#00C2FF" fill="none" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <div class="ai-feature-content"><strong>Automated Planning:</strong> Suggest new goals, projects, and reminders to keep track of deadlines.</div>
+          </li>
+          <li>
+            <svg stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke="#00C2FF" fill="none" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <div class="ai-feature-content"><strong>Instant Insights:</strong> Get data-driven insights and proactive suggestions to boost productivity.</div>
+          </li>
+        </ul>
+        <a href="#about" class="cta-link" aria-label="Explore AI Assistant detailed features">Explore AI Assistant</a>
+      </div>
+      <div class="ai-right" role="region" aria-live="polite" aria-label="AI assistant chat simulation">
+        <div class="chat-window" aria-roledescription="Chat window">
+          <div class="chat-header">
+            <div class="avatar" aria-hidden="true">K</div>
+            <div class="user-info">
+              <h3>Kollab Assistant</h3>
+              <p>Online</p>
+            </div>
+            <div class="status-dot" aria-hidden="true"></div>
+          </div>
+          <div class="chat-messages" id="chatMessages" tabindex="0" aria-live="polite" aria-atomic="false">
+            <div class="chat-message" aria-label="Message from Kollab Assistant">
+              Hi there! I’m Kollab Assistant. How can I assist you today?
+            </div>
+          </div>
+          <form id="chatForm" class="chat-input-area" role="search" aria-label="Send a message to Kollab Assistant">
+            <input id="chatInput" class="chat-input" type="text" placeholder="Type your message here..." aria-label="Message input" autocomplete="off" required />
+            <button id="chatSendBtn" class="chat-send-btn" type="submit" aria-label="Send message" disabled>Send</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="about-us" aria-labelledby="aboutus-title">
+    <div class="container about-container">
+      <span class="about-tag">AboutUs</span>
+      <h2 id="aboutus-title" class="about-title">Empowering teams to work smarter, not harder.</h2>
+      <p class="about-description">
+        KollabHub was born from a simple idea — to eliminate the chaos of switching between multiple apps just to stay connected and organized.
+        We believe collaboration should be seamless, intuitive, and secure — all from one place.
+      </p>
+      <p class="about-description">
+        Our platform brings together instant messaging, task management, workspace boards, and intelligent AI assistance to help modern teams stay aligned, productive, and connected.
+      </p>
+      <p class="about-description">
+        We couldn't be more excited to build tools that help people focus on what matters most.
+      </p>
+      <p class="about-subtitle">Our mission:</p>
+      <p class="about-paragraph">
+        To simplify teamwork by combining everything you need into one unified workspace.
+      </p>
+      <p class="about-subtitle">Our vision:</p>
+      <p class="about-paragraph">
+        A world where productivity and communication flow effortlessly.
+      </p>
+      <p class="about-description">
+        Let's build the future of collaboration — together.
+        KollabHub helps your team move faster, stay connected, and see meaningful work.
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer role="contentinfo">
+  <div class="footer-container container">
+    <div class="footer-left">
+      <div class="logo-footer" aria-label="Kollab Hub Logo">
+        <span>Kollab</span><span>Hub</span>
+      </div>
+      <p>One workspace. Infinite possibilities.</p>
+      <p>© 2024 KollabHub. All rights reserved.</p>
+    </div>
+    <nav class="footer-navs" aria-label="Footer navigation links">
+      <div class="footer-nav" aria-labelledby="prod-links">
+        <h4 id="prod-links">Product</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#overview">Overview</a></li>
+          <li><a href="#ai-powered">AI Center</a></li>
+          <li><a href="#about">Security</a></li>
+        </ul>
+      </div>
+      <div class="footer-nav" aria-labelledby="company-links">
+        <h4 id="company-links">Company</h4>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#features">Careers</a></li>
+          <li><a href="#ai-powered">Support</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-nav" aria-labelledby="resources-links">
+        <h4 id="resources-links">Resources</h4>
+        <ul>
+          <li><a href="#features">Docs</a></li>
+          <li><a href="#about">Help Center</a></li>
+          <li><a href="#ai-powered">Tutorials</a></li>
+          <li><a href="#overview">API</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  // Basic chat input functionality simulation without backend
+  (() => {
+    const chatInput = document.getElementById('chatInput');
+    const chatSendBtn = document.getElementById('chatSendBtn');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatForm = document.getElementById('chatForm');
+
+    chatInput.addEventListener('input', () => {
+      chatSendBtn.disabled = !chatInput.value.trim();
+    });
+
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const userText = chatInput.value.trim();
+      if(userText === '') return;
+      // Append user message bubble
+      const userMessage = document.createElement('div');
+      userMessage.className = 'chat-message user';
+      userMessage.setAttribute('aria-label', 'Your message');
+      userMessage.textContent = userText;
+      chatMessages.appendChild(userMessage);
+
+      chatInput.value = '';
+      chatSendBtn.disabled = true;
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // Simulate assistant reply (basic canned responses)
+      setTimeout(() => {
+        const assistantReply = document.createElement('div');
+        assistantReply.className = 'chat-message';
+        assistantReply.setAttribute('aria-label', 'Message from Kollab Assistant');
+        let reply = "I'm here to help! Try asking me about features, task management, or team collaboration.";
+        if (userText.toLowerCase().includes('feature')) {
+          reply = "KollabHub offers real-time messaging, file sharing, audio/video calls and AI task assistance.";
+        } else if (userText.toLowerCase().includes('task')) {
+          reply = "You can create and assign tasks using visual boards, and track progress effortlessly.";
+        } else if (userText.toLowerCase().includes('team')) {
+          reply = "Our platform enables your team to collaborate seamlessly, whether remote or in-office.";
+        }
+        assistantReply.textContent = reply;
+        chatMessages.appendChild(assistantReply);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }, 1000);
+    });
+  })();
+</script>
+</body>
+</html>
