@@ -68,7 +68,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'chatappdb',       
         'USER': 'postgres',         
-        'PASSWORD': 'try098$',
+        'PASSWORD': 'winwin',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -126,4 +126,5 @@ AUTH_USER_MODEL = 'kollabapp.CustomUser'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
 
