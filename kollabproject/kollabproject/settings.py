@@ -63,17 +63,6 @@ WSGI_APPLICATION = 'kollabproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'chatappdb',       
-        'USER': 'postgres',         
-        'PASSWORD': 'winwin',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-
 
 
 # Password validation
@@ -126,5 +115,6 @@ AUTH_USER_MODEL = 'kollabapp.CustomUser'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
 
 
