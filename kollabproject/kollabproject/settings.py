@@ -1,6 +1,24 @@
-
-
+import os
+import environ
 from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+SECRET_KEY = env('SECRET_KEY')
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = env('DEBUG', default=False)
+
+ALLOWED_HOSTS = []
+
+DATABASES = {
+    'default': env.db('DATABASE_URL')
+}
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -63,10 +81,12 @@ WSGI_APPLICATION = 'kollabproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-
-
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+
+DATABASES = {
+    'default': env.db(default='sqlite:///db.sqlite3')
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -115,6 +135,4 @@ AUTH_USER_MODEL = 'kollabapp.CustomUser'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
-
 
