@@ -1,21 +1,24 @@
 import os
 import environ
+import dj_database_url
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Initialize environment variables
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
+# Load SECRET_KEY and other env variables
 SECRET_KEY = env('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG', default=False)
-
-ALLOWED_HOSTS = []
-
+# Configure database from environment variable
 DATABASES = {
-    'default': env.db('DATABASE_URL')
+    'default': dj_database_url.config(
+        default=env('DATABASE_URL'),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
 
 
@@ -83,9 +86,6 @@ WSGI_APPLICATION = 'kollabproject.wsgi.application'
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
-DATABASES = {
-    'default': env.db(default='sqlite:///db.sqlite3')
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
